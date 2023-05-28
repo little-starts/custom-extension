@@ -56,6 +56,8 @@ class WitCatInput {
 				const canvas = runtime.renderer.canvas;
 				if (canvas instanceof HTMLCanvasElement) {
 					return canvas;
+				} else {
+					return null;
 				}
 			} catch (err) {
 				return null;
@@ -72,6 +74,8 @@ class WitCatInput {
 				const canvas = runtime.renderer.canvas;
 				if (canvas instanceof HTMLCanvasElement) {
 					return canvas.parentElement;
+				} else {
+					return null;
 				}
 			} catch (err) {
 				console.error(err);
@@ -853,7 +857,9 @@ class WitCatInput {
 	 * @param {SCarg} args.size 文字大小 
 	 */
 	createinput(args) {
-		if (this.canvas() === null || this.inputParent() === null) {
+		const canvas = this.canvas();
+		const inputParent = this.inputParent();
+		if (canvas === null || inputParent === null) {
 			return;
 		}
 		let x = Number(args.x);
@@ -879,7 +885,7 @@ class WitCatInput {
 		// 避免后面大量复制粘贴样式操作。
 		// 大段的复制粘贴往往意味着之后会犯错（只改一半）
 		if (search !== null && search.tagName !== args.type) {
-			this.inputParent().removeChild(search);
+			inputParent.removeChild(search);
 			search = null;
 		}
 		if (search === null) {
@@ -902,7 +908,7 @@ class WitCatInput {
 			search.className = "WitCatInput";
 			search.name = String(args.type);
 			search.placeholder = String(args.texts);
-			this.inputParent().appendChild(search);
+			inputParent.appendChild(search);
 		}
 
 		// 现在直接通过style的属性修改样式表，不需要担心“分号注入”问题了
@@ -916,7 +922,7 @@ class WitCatInput {
 		sstyle.top = `${y}%`;
 		sstyle.width = `${width}%`;
 		sstyle.height = `${height}%`;
-		sstyle.fontSize = `${this.adaptive ? (parseFloat(this.canvas().style.width) / 360) * Number(args.size) : Number(args.size)}px`;
+		sstyle.fontSize = `${this.adaptive ? (parseFloat(canvas.style.width) / 360) * Number(args.size) : Number(args.size)}px`;
 		sstyle.resize = "none";
 		sstyle.color = String(args.color);
 		sstyle.opacity = "1";
@@ -933,12 +939,13 @@ class WitCatInput {
 	 * @param {SCarg} args.id 文本框id
 	 */
 	deleteinput(args) {
-		if (this.inputParent() === null) {
+		const inputParent = this.inputParent();
+		if (inputParent === null) {
 			return;
 		}
 		let search = document.getElementById("WitCatInput" + args.id);
 		if (search !== null) {
-			this.inputParent().removeChild(search);
+			inputParent.removeChild(search);
 		}
 	}
 
@@ -1012,12 +1019,13 @@ class WitCatInput {
 	 * 删除所有文本框
 	 */
 	deleteallinput() {
-		if (this.inputParent() === null) {
+		const inputParent = this.inputParent();
+		if (inputParent === null) {
 			return;
 		}
 		let search = document.getElementsByClassName("WitCatInput");
 		for (const item of Array.from(search)) {
-			this.inputParent().removeChild(item);
+			inputParent.removeChild(item);
 		}
 	}
 
@@ -1028,10 +1036,11 @@ class WitCatInput {
 	 * @returns {number}
 	 */
 	compute(args) {
-		if (this.canvas() === null) {
+		const canvas = this.canvas();
+		if (canvas === null) {
 			return 0;
 		}
-		return parseFloat(this.canvas().style.width) / 360 * Number(args.size);
+		return parseFloat(canvas.style.width) / 360 * Number(args.size);
 	}
 
 	/**
@@ -1410,7 +1419,8 @@ class WitCatInput {
 	 * @param {SCarg} args.type
 	 */
 	fontadaptive(args) {
-		if (this.canvas() === null) {
+		const canvas = this.canvas();
+		if (canvas === null) {
 			return;
 		}
 		if (args.type == "true") {
@@ -1418,7 +1428,7 @@ class WitCatInput {
 				let search = document.getElementsByClassName("WitCatInput");
 				const config = { attributes: true, childList: true, subtree: true, attributeFilter: ['style'] };
 				const callback = () => {
-					if (this.canvas() === null) {
+					if (canvas === null) {
 						return;
 					}
 					for (let searchi of Array.from(search)) {
@@ -1427,11 +1437,11 @@ class WitCatInput {
 						if (fontsize === undefined) {
 							continue;
 						}
-						searchi.style.fontSize = parseFloat(this.canvas().style.width) / 360 * fontsize + "px";
+						searchi.style.fontSize = parseFloat(canvas.style.width) / 360 * fontsize + "px";
 					}
 				};
 				this.observer = new MutationObserver(callback);
-				this.observer.observe(this.canvas(), config);
+				this.observer.observe(canvas, config);
 				this.adaptive = true;
 			}
 		}
@@ -1449,7 +1459,9 @@ class WitCatInput {
 	 * 添加键盘鼠标事件
 	 */
 	_addevent() {
-		if (this.canvas() === null || this.inputParent() === null) {
+		const canvas = this.canvas();
+		const inputParent = this.inputParent();
+		if (canvas === null || inputParent === null) {
 			return;
 		}
 		//键盘事件监听
@@ -1462,7 +1474,7 @@ class WitCatInput {
 		});
 
 		//给页面绑定滑轮滚动事件
-		this.canvas().addEventListener('wheel', (e) => {
+		canvas.addEventListener('wheel', (e) => {
 			// 注意这个负数……
 			// 目前的标准用法是使用 deltaY，但是 deltaY 的符号和 WheelDeltaY 相反。
 			// 为了和原有的行为一致，乘上 -3
