@@ -56,12 +56,11 @@ class WitCatInput {
 				const canvas = runtime.renderer.canvas;
 				if (canvas instanceof HTMLCanvasElement) {
 					return canvas;
-				} else {
-					return null;
 				}
 			} catch (err) {
-				return null;
+				console.error(err);
 			}
+			return null;
 		};
 
 		/**
@@ -74,17 +73,15 @@ class WitCatInput {
 				const canvas = runtime.renderer.canvas;
 				if (canvas instanceof HTMLCanvasElement) {
 					return canvas.parentElement;
-				} else {
-					return null;
 				}
 			} catch (err) {
 				console.error(err);
-				return null;
 			}
+			return null;
 		};
 
 		if (this.canvas() === null || this.inputParent() === null) {
-			alert("当前页面不支持文本框，请前往作品详情页体验完整作品！");
+			console.error("当前页面不支持文本框，请前往作品详情页体验完整作品！");
 			// 注意：在提示之后，扩展仍然在运行。需要在后面引用 Canvas 的部分进行判断。
 		}
 		this._addevent();
