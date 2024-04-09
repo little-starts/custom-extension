@@ -1,5 +1,4 @@
-// import Cast from "cast.js";
-import { Base64 } from "./base64.js";
+import * as jsBase64 from 'js-base64';
 import JSZip from "jszip";
 import { witcat_file_helper_icon, witcat_file_helper_extensionId } from "./assets/index.js";
 
@@ -1000,7 +999,7 @@ export default class WitCatFileHelper {
      */
     encrypt(args) {
         try {
-            return Base64.encode(String(args.text))
+            return jsBase64.encode(String(args.text))
         }
         catch {
             return "";
@@ -1014,7 +1013,7 @@ export default class WitCatFileHelper {
      */
     decrypt(args) {
         try {
-            return Base64.decode(String(args.text))
+            return jsBase64.decode(String(args.text))
         }
         catch {
             return "";
