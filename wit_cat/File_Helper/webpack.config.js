@@ -24,10 +24,5 @@ module.exports = {
         },
       },
     ],
-  },
-  resolve: {
-    alias: {
-      moment$: path.resolve('./node_modules/moment/moment.js'), // 如果需要解决moment库的别名引用问题
-    },
-  },
+  }
 };
